@@ -9,8 +9,8 @@ end
 
 helpers do
   def in_paragraphs(text)
-    text.split("\n\n").map do
-      |paragraph| "<p>#{paragraph}</p>"
+    text.split("\n\n").map.with_index do
+      |paragraph, idx| "<p id=paragraph#{idx}>#{paragraph}</p>"
     end.join
   end
 
@@ -34,9 +34,7 @@ get "/chapters/:number" do
   redirect "/" unless (1..@contents.size).cover? number
 
   @title = "Chapter #{number}: #{chapter_name}"
-  @chapter = File.read("data/chp#{number}.txt").split("\n\n")
-                                               .map.with_index { |chp, idx| "<span id=\"paragraph#{idx}\">#{chp}</span>" }
-                                               .join("\n\n")
+  @chapter = File.read("data/chp#{number}.txt")
 
   erb :chapter
 end
@@ -55,15 +53,13 @@ def chapters_matching(query)
   return results if !query || query.empty?
 
   each_chapter do |number, name, contents|
-    if contents.include?(query)
-      results << {number: number, name: name}
-      results.last[:paragraphs] = contents.split("\n\n")
-                                          .map.with_index { |paragraph, idx| [idx, paragraph] }
-                                          .to_h
-                                          .select { |par, chp| chp.include?(query) }
+    matches = {}
+    contents.split("\n\n").each_with_index do |paragraph, index|
+      matches[index] = paragraph if paragraph.include?(query)
     end
-  end
-
+    results << {number: number, name: name, paragraphs: matches} if matches.any?
+    end
+    
   results
 end
 
