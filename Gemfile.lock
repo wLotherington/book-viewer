@@ -4,8 +4,8 @@ GEM
     backports (3.20.1)
     erubis (2.7.0)
     multi_json (1.15.0)
-    nio4r (2.5.4)
-    puma (5.1.1)
+    nio4r (2.5.7)
+    puma (5.3.1)
       nio4r (~> 2.0)
     rack (1.6.13)
     rack-protection (1.5.5)
@@ -27,6 +27,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   erubis
